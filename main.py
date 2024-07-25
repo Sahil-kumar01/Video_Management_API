@@ -4,6 +4,6 @@ from routes import f_router
 
 app = FastAPI()
 
-app.include_router(f_router.router)
+app.include_router(f_router.router,prefix="/videos")
 
 
