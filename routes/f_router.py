@@ -10,21 +10,21 @@ from datetime import datetime
 
 router = APIRouter()
 
-# MongoDB setup
+
 client = AsyncIOMotorClient(mongo_url)
 db = client.videos
 videos_collection = db.videos
 
-# Ensure the directory exists
+
 os.makedirs('videos', exist_ok=True)
 
-# Define Pydantic models for video metadata
+
 class VideoMetadata(BaseModel):
     title: str
     description: Optional[str] = None
     tags: Optional[List[str]] = None
 
-# Upload video endpoint
+
 @router.post("/upload-video/")
 async def upload_video(
     file: UploadFile = File(...),
@@ -37,7 +37,7 @@ async def upload_video(
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     
-    # Store video metadata in MongoDB
+    
     video_data = {
         "title": title,
         "description": description,
@@ -50,10 +50,15 @@ async def upload_video(
 
     return {"filename": file.filename, "id": str(result.inserted_id)}
 
-# Retrieve video metadata and file
+
+from bson import ObjectId
+
 @router.get("/get-video/{video_id}")
 async def get_video(video_id: str):
-    video = await videos_collection.find_one({"_id": video_id})
+    try:
+        video = await videos_collection.find_one({"_id": ObjectId(video_id)})
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid video ID format")
     
     if not video:
         raise HTTPException(status_code=404, detail="Video not found")
@@ -64,27 +69,36 @@ async def get_video(video_id: str):
     
     return FileResponse(file_path)
 
-# Update video metadata
+
+
+from bson import ObjectId
+
 @router.put("/update-metadata/{video_id}")
 async def update_metadata(video_id: str, metadata: VideoMetadata):
-    result = await videos_collection.update_one(
-        {"_id": video_id},
-        {"$set": {
-            "title": metadata.title,
-            "description": metadata.description,
-            "tags": metadata.tags
-        }}
-    )
+    try:
+        result = await videos_collection.update_one(
+            {"_id": ObjectId(video_id)},
+            {"$set": {
+                "title": metadata.title,
+                "description": metadata.description,
+                "tags": metadata.tags
+            }}
+        )
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid video ID format")
     
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Video not found")
     
     return {"message": "Metadata updated successfully"}
 
-# Delete video and metadata
+
 @router.delete("/delete-video/{video_id}")
 async def delete_video(video_id: str):
-    video = await videos_collection.find_one({"_id": video_id})
+    try:
+        video = await videos_collection.find_one({"_id": ObjectId(video_id)})
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid video ID format")
     
     if not video:
         raise HTTPException(status_code=404, detail="Video not found")
@@ -93,5 +107,5 @@ async def delete_video(video_id: str):
     if os.path.exists(file_path):
         os.remove(file_path)
     
-    await videos_collection.delete_one({"_id": video_id})
+    await videos_collection.delete_one({"_id": ObjectId(video_id)})
     return {"message": "Video and metadata deleted successfully"}
