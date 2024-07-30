@@ -1,9 +1,5 @@
-from fastapi import FastAPI,File
-from routes import f_router
+from app import app
 
-
-app = FastAPI()
-
-app.include_router(f_router.router,prefix="/videos")
-
-
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
