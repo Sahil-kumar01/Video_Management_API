@@ -1,21 +1,37 @@
+# version: '3.8'
+
+# services:
+#   app:
+#     build: .
+#     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+#     volumes:
+#       - .:/app
+#     ports:
+#       - "8000:8000"
+#     depends_on:
+#       - mongo
+#     environment:
+#       - MONGO_URI=mongodb+srv://sahilkumarktp16:S%40hil2003@mongoy.q4auz7c.mongodb.net/videos
+  
 version: '3.8'
 
 services:
-  app:
+  fastapi:
     build: .
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
-    volumes:
-      - .:/app
+    container_name: fastapi
     ports:
       - "8000:8000"
-    depends_on:
-      - mongo
-    environment:
-      - MONGO_URI=mongodb://localhost:27017/videos
-  
-  mongo:
-    image: mongo:latest
     volumes:
-      - ./mongo/data:/data/db
-    ports:
-      - "27017:27017"
+      - .:/app
+      - ./videos:/app/videos
+    environment:
+      - MONGODB_URL=mongodb+srv://sahilkumarktp16:S%40hil2003@mongoy.q4auz7c.mongodb.net/videos
+
+
+
+  # mongo:
+  #   image: mongo:latest
+  #   volumes:
+  #     - ./mongo/data:/data/db
+  #   ports:
+  #     - "27017:27017"
