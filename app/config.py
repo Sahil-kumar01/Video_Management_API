@@ -1,1 +1,3 @@
-mongo_url = 'mongodb://localhost:27017'
+import os
+
+mongo_url = os.getenv('MONGO_URL', 'mongodb://localhost:27017')
