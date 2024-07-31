@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-# Install necessary packages including SSL/TLS libraries
+#to install ssl and run
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libssl-dev \
