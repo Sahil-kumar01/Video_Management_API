@@ -1,8 +1,8 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
 from app.config import mongo_url
+from typing import List
 
-# Initialize MongoDB client
 client = AsyncIOMotorClient(mongo_url)
 db = client.videos
 videos_collection = db.videos

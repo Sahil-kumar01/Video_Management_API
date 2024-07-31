@@ -1,4 +1,4 @@
-from fastapi import APIRouter, File, UploadFile, HTTPException,Form,status
+from fastapi import APIRouter, File, UploadFile, HTTPException,Form,status,Query
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
@@ -21,7 +21,7 @@ async def upload_video(
 ):
    
     
-    # Check if the uploaded file is in an allowed video format
+    # check if the uploaded file is in an allowed video format
     if file.content_type not in ALLOWED_MIME_TYPES:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -60,6 +60,7 @@ async def get_video(video_id: str):
         raise HTTPException(status_code=404, detail="Video file not found")
     
     return FileResponse(file_path)
+
 
 @router.put("/update-metadata/{video_id}")
 async def update_metadata(video_id: str, metadata: VideoMetadata):
