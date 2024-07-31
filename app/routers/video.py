@@ -1,12 +1,13 @@
-from fastapi import APIRouter, File, UploadFile, HTTPException, Form,status
+from fastapi import APIRouter, File, UploadFile, HTTPException,Form,status
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 import os
 import shutil
-from app.services.video import save_video_metadata, get_video_by_id, update_video_metadata, delete_video_by_id
+from app.services.video import save_video_metadata,get_video_by_id,update_video_metadata,delete_video_by_id
 from app.models.video import VideoMetadata
+from app.check_types import ALLOWED_MIME_TYPES
 router = APIRouter()
 
 os.makedirs('videos', exist_ok=True)
@@ -18,12 +19,13 @@ async def upload_video(
     description: Optional[str] = Form(None),
     tags: List[str] = Form(...)
 ):
-    # check for file format
-    file_types = ["video/mp4", "video/avi", "video/mkv", "video/mov"]
-    if file.content_type not in file_types:
+   
+    
+    # Check if the uploaded file is in an allowed video format
+    if file.content_type not in ALLOWED_MIME_TYPES:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid file format. Please upload a video file."
+            detail=f"Invalid file format: {file.content_type}. Please upload a video file."
         )
     
     file_path = os.path.join('videos', file.filename)
