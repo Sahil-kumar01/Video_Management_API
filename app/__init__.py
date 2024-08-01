@@ -3,7 +3,7 @@ from app.routers import video
 
 app = FastAPI(   
     title="Video Management API",
-    description="An API for managing videos, including upload, download, Updating and listing.",
+    description="A FastAPI-based Video Management API for uploading, downloading, updating, and deleting videos with metadata handling and tag support.",
     version="1.0.0",
     terms_of_service="http://foo.com",
     contact={
