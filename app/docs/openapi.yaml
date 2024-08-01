@@ -1,0 +1,317 @@
+openapi: 3.0.1
+info:
+  title: Video Management API
+  description: API for managing videos including uploading, retrieving, updating, and deleting videos.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Local server
+
+paths:
+  /video:
+    post:
+      summary: Upload a video
+      description: The post method is used to upload the video files into the database.
+      tags:
+        - Video Management
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                title:
+                  type: string
+                description:
+                  type: string
+                  nullable: true
+                tags:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Video uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  filename:
+                    type: string
+                    example: "video.mp4"
+                  id:
+                    type: string
+                    example: "123456"
+                  title:
+                    type: string
+                    example: "Sample Video"
+                  description:
+                    type: string
+                    example: "A sample video description."
+                  tags:
+                    type: array
+                    items:
+                      type: string
+                    example: ["tag1", "tag2"]
+                  upload_date:
+                    type: string
+                    format: date-time
+                    example: "2023-01-01T00:00:00Z"
+        '400':
+          description: Invalid file format or input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Invalid file format: application/pdf. Please upload a video file."
+
+    get:
+      summary: Get a video by ID
+      tags:
+        - Video Management
+      parameters:
+        - in: query
+          name: video_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Video retrieved successfully
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Invalid video ID format
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Invalid video ID format"
+        '404':
+          description: Video not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Video not found"
+
+    put:
+      summary: Update video metadata
+      tags:
+        - Video Management
+      parameters:
+        - in: query
+          name: video_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VideoMetadata'
+      responses:
+        '200':
+          description: Metadata updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Metadata updated successfully"
+        '400':
+          description: Invalid video ID format
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Invalid video ID format"
+        '404':
+          description: Video not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Video not found"
+
+    delete:
+      summary: Delete a video by ID
+      tags:
+        - Video Management
+      parameters:
+        - in: query
+          name: video_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Video deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  filename:
+                    type: string
+                    example: "video.mp4"
+                  id:
+                    type: string
+                    example: "123456"
+                  title:
+                    type: string
+                    example: "Sample Video"
+                  description:
+                    type: string
+                    example: "A sample video description."
+                  tags:
+                    type: array
+                    items:
+                      type: string
+                    example: ["tag1", "tag2"]
+                  deleted_date:
+                    type: string
+                    format: date-time
+                    example: "2023-01-01T00:00:00Z"
+        '400':
+          description: Invalid video ID format
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Invalid video ID format"
+        '404':
+          description: Video not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Video not found"
+
+  /videos/findByTags:
+    get:
+      summary: Search videos by tag
+      tags:
+        - Video Management
+      parameters:
+        - in: query
+          name: tag
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Videos found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VideoResponse'
+        '404':
+          description: No videos found with the specified tag
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "No videos found with the specified tag"
+
+components:
+  schemas:
+    VideoMetadata:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+
+    VideoResponse:
+      type: object
+      properties:
+        filename:
+          type: string
+          example: "video.mp4"
+        id:
+          type: string
+          example: "123456"
+        title:
+          type: string
+          example: "Sample Video"
+        description:
+          type: string
+          example: "A sample video description."
+        tags:
+          type: array
+          items:
+            type: string
+          example: ["tag1", "tag2"]
+        upload_date:
+          type: string
+          format: date-time
+          example: "2023-01-01T00:00:00Z"
+
+    DVideoResponse:
+      type: object
+      properties:
+        filename:
+          type: string
+          example: "video.mp4"
+        id:
+          type: string
+          example: "123456"
+        title:
+          type: string
+          example: "Sample Video"
+        description:
+          type: string
+          example: "A sample video description."
+        tags:
+          type: array
+          items:
+            type: string
+          example: ["tag1", "tag2"]
+        deleted_date:
+          type: string
+          format: date-time
+          example: "2023-01-01T00:00:00Z"

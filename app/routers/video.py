@@ -12,7 +12,9 @@ router = APIRouter()
 
 os.makedirs('videos', exist_ok=True)
 
-@router.post("/video", response_model=VideoResponse, tags=["Video Management"])
+
+
+@router.post("/video", response_model=VideoResponse, tags=["Video Management"],description="The post method is used to upload the video files into the database.")
 async def upload_video(
     file: UploadFile = File(...),
     title: str = Form(...),
@@ -50,6 +52,8 @@ async def upload_video(
         "upload_date": video_data["upload_date"]
     }
 
+
+
 @router.get("/video",response_model=VideoResponse,tags=["Video Management"])
 async def get_video(video_id: str):
     try:
@@ -66,12 +70,16 @@ async def get_video(video_id: str):
     
     return FileResponse(file_path)
    
+
+
 @router.get("/videos/findByTags",tags=["Video Management"])
 async def search_videos_by_tag(tag: str):
     videos = await get_videos_by_tag(tag)
     if not videos:
         raise HTTPException(status_code=404, detail="No videos found with the specified tag")
     return videos
+
+
 
 
 @router.put("/video",tags=["Video Management"])
@@ -85,6 +93,8 @@ async def update_metadata(video_id: str, metadata: VideoMetadata):
         raise HTTPException(status_code=404, detail="Video not found")
     
     return {"message": "Metadata updated successfully"}
+
+
 
 @router.delete("/video",response_model=DVideoResponse,tags=["Video Management"])
 async def delete_video(video_id: str):
@@ -101,7 +111,7 @@ async def delete_video(video_id: str):
         os.remove(file_path)
     
     await delete_video_by_id(video_id)
-    # Create response model instance
+    
     response = DVideoResponse(
         filename=video["filename"],
         id=video_id,
