@@ -15,6 +15,12 @@ app = FastAPI(
         "name": "Lisence 1.0.0",
         "url": "https://www.fooo.com/licenses",
     },
+    servers=[
+        {
+            "url": "http://127.0.0.1:8000",
+            "description": "Local Server"
+        }
+    ]
     )
 
 app.include_router(video.router)
