@@ -18,7 +18,7 @@ app = FastAPI(
     servers=[
         {
             "url": "http://127.0.0.1:8000",
-            "description": "Local Server"
+            # "description": "Local Server"
         }
     ]
     )

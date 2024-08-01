@@ -12,7 +12,7 @@ router = APIRouter()
 
 os.makedirs('videos', exist_ok=True)
 
-@router.post("/video")
+@router.post("/video",tags=["Video Management"])
 async def upload_video(
     file: UploadFile = File(...),
     title: str = Form(...),
@@ -45,7 +45,7 @@ async def upload_video(
     video_id = await save_video_metadata(video_data)
     return {"filename": file.filename, "id": video_id}
 
-@router.get("/id")
+@router.get("/video",tags=["Video Management"])
 async def get_video(video_id: str):
     try:
         video = await get_video_by_id(video_id)
@@ -61,7 +61,7 @@ async def get_video(video_id: str):
     
     return FileResponse(file_path)
 
-@router.get("/videos/tags")
+@router.get("/videos/findByTags",tags=["Video Management"])
 async def search_videos_by_tag(tag: str):
     videos = await get_videos_by_tag(tag)
     if not videos:
@@ -69,7 +69,7 @@ async def search_videos_by_tag(tag: str):
     return videos
 
 
-@router.put("/update")
+@router.put("/video",tags=["Video Management"])
 async def update_metadata(video_id: str, metadata: VideoMetadata):
     try:
         matched_count = await update_video_metadata(video_id, metadata.dict())
@@ -81,7 +81,7 @@ async def update_metadata(video_id: str, metadata: VideoMetadata):
     
     return {"message": "Metadata updated successfully"}
 
-@router.delete("/delete-video")
+@router.delete("/video",tags=["Video Management"])
 async def delete_video(video_id: str):
     try:
         video = await get_video_by_id(video_id)
