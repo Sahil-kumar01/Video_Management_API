@@ -15,6 +15,14 @@ async def get_video_by_id(video_id: str):
     video = await videos_collection.find_one({"_id": ObjectId(video_id)})
     return video
 
+async def get_videos_by_tag(tag: str) -> List[dict]:
+    cursor = videos_collection.find({"tags": tag})
+    videos = []
+    async for video in cursor:
+        video["_id"] = str(video["_id"])
+        videos.append(video)
+    return videos
+
 async def update_video_metadata(video_id: str, metadata: dict):
     result = await videos_collection.update_one(
         {"_id": ObjectId(video_id)},

@@ -5,14 +5,14 @@ from typing import List, Optional
 from datetime import datetime
 import os
 import shutil
-from app.services.video import save_video_metadata,get_video_by_id,update_video_metadata,delete_video_by_id
+from app.services.video import save_video_metadata,get_video_by_id,update_video_metadata,delete_video_by_id,get_videos_by_tag
 from app.models.video import VideoMetadata
 from app.check_types import ALLOWED_MIME_TYPES
 router = APIRouter()
 
 os.makedirs('videos', exist_ok=True)
 
-@router.post("/upload-video/")
+@router.post("/video")
 async def upload_video(
     file: UploadFile = File(...),
     title: str = Form(...),
@@ -60,6 +60,13 @@ async def get_video(video_id: str):
         raise HTTPException(status_code=404, detail="Video file not found")
     
     return FileResponse(file_path)
+
+@router.get("/search-videos/")
+async def search_videos_by_tag(tag: str):
+    videos = await get_videos_by_tag(tag)
+    if not videos:
+        raise HTTPException(status_code=404, detail="No videos found with the specified tag")
+    return videos
 
 
 @router.put("/update-metadata/{video_id}")
