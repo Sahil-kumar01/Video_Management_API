@@ -10,4 +10,4 @@ services:
       - .:/app
       - ./videos:/app/videos
     environment:
-      - MONGODB_URL=mongodb+srv://sahilkumarktp16:S%40hil2003@mongoy.q4auz7c.mongodb.net/videos
+      - MONGODB_URL=your_mongo_db_link
