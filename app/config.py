@@ -1,3 +1,3 @@
 import os
 
-mongo_url = os.getenv('MONGO_URL', 'mongodb+srv://sahilkumarktp16:S%40hil2003@mongoy.q4auz7c.mongodb.net/videos')
+mongo_url = os.getenv('MONGO_URL', 'your_mongodb_link')

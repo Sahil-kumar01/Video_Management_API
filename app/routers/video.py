@@ -54,7 +54,7 @@ async def upload_video(
 
 
 
-@router.get("/video",response_model=VideoResponse,tags=["Video Management"])
+@router.get("/video/{video_id}",response_model=VideoResponse,tags=["Video Management"])
 async def get_video(video_id: str):
     try:
         video = await get_video_by_id(video_id)
@@ -72,7 +72,7 @@ async def get_video(video_id: str):
    
 
 
-@router.get("/videos/findByTags",tags=["Video Management"])
+@router.get("/videos/findByTags/{tags}",tags=["Video Management"])
 async def search_videos_by_tag(tag: str):
     videos = await get_videos_by_tag(tag)
     if not videos:
@@ -82,7 +82,7 @@ async def search_videos_by_tag(tag: str):
 
 
 
-@router.put("/video",tags=["Video Management"])
+@router.put("/video/{video_id}",tags=["Video Management"])
 async def update_metadata(video_id: str, metadata: VideoMetadata):
     try:
         matched_count = await update_video_metadata(video_id, metadata.dict())
@@ -96,7 +96,7 @@ async def update_metadata(video_id: str, metadata: VideoMetadata):
 
 
 
-@router.delete("/video",response_model=DVideoResponse,tags=["Video Management"])
+@router.delete("/video/{video_id}",response_model=DVideoResponse,tags=["Video Management"])
 async def delete_video(video_id: str):
     try:
         video = await get_video_by_id(video_id)
